@@ -12,13 +12,15 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Exlog',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+    return SafeArea(
+      child: MaterialApp(
+        title: 'Exlog',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          useMaterial3: true,
+        ),
+        home: const RegistrationPage(title: 'Exlog - Expense Logger'),
       ),
-      home: const RegistrationPage(title: 'Exlog - Expense Logger'),
     );
   }
 }
@@ -105,17 +107,28 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 const SizedBox(height: 32.0),
                 ElevatedButton(
                   onPressed: () {
-                    // TODO: Validate form
-                    //
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginPage(
-                          email: emailController.text,
-                          password: passwordController.text,
+                    //  Validate form for empty fields
+                    if (nameController.text.isEmpty ||
+                        emailController.text.isEmpty ||
+                        passwordController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Empty fields not allowed'),
+                          backgroundColor: Colors.red,
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      // navigate to login page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(
+                            email: emailController.text,
+                            password: passwordController.text,
+                          ),
+                        ),
+                      );
+                    }
                   },
                   child: const Text('Register'),
                 ),
@@ -125,12 +138,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ElevatedButton(
                   onPressed: () {
                     // Navigate to login page
+                    String email = 'rahul@gmail.com';
+                    String password = '1234';
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => LoginPage(
-                          email: emailController.text,
-                          password: passwordController.text,
+                          email: email,
+                          password: password,
                         ),
                       ),
                     );
