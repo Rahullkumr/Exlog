@@ -1,3 +1,5 @@
+import 'package:exlog/add_expenses.dart';
+import 'package:exlog/view_expenses.dart';
 import 'package:flutter/material.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -161,11 +163,17 @@ class DashboardPage extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       ElevatedButton(
-                        onPressed: () {},
-                        // ignore: prefer_const_constructors
-                        child: Padding(
-                          padding: const EdgeInsets.all(18.0),
-                          child: const Text(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const AddExpenses(),
+                            ),
+                          );
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(18.0),
+                          child: Text(
                             "Add Expenses",
                             style: TextStyle(
                               fontSize: 18,
@@ -178,7 +186,12 @@ class DashboardPage extends StatelessWidget {
                       ),
                       ElevatedButton(
                         onPressed: () {
-                          
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const ViewExpenses(),
+                            ),
+                          );
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(18.0),
