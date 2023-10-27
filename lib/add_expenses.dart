@@ -21,74 +21,70 @@ class _AddExpensesState extends State<AddExpenses> {
           centerTitle: true,
         ),
         body: Center(
-          child: Column(
-            children: [
-              SingleChildScrollView(
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                // mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(30.0),
+                    child: Text(
+                      'Today\'s Expenses',
+                      style: TextStyle(fontSize: 32.0),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: emailController,
+                      decoration: const InputDecoration(hintText: 'Title'),
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: passwordController,
+                      decoration:
+                          const InputDecoration(hintText: 'Amount Spent'),
+                    ),
+                  ),
+                  const SizedBox(height: 10.0),
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: TextField(
+                      controller: passwordController,
+                      decoration:
+                          const InputDecoration(hintText: 'Date'),
+                    ),
+                  ),
+                  const SizedBox(height: 20.0),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.all(30.0),
-                        child: Text(
-                          'Today\'s Expenses',
-                          style: TextStyle(fontSize: 32.0),
-                        ),
-                      ),
                       Padding(
-                        padding: const EdgeInsets.all(30.0),
-                        child: TextField(
-                          controller: emailController,
-                          decoration: const InputDecoration(hintText: 'Title'),
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Padding(
-                        padding: const EdgeInsets.all(30.0),
-                        child: TextField(
-                          controller: passwordController,
-                          decoration:
-                              const InputDecoration(hintText: 'Amount Spent'),
-                        ),
-                      ),
-                      const SizedBox(height: 10.0),
-                      Padding(
-                        padding: const EdgeInsets.all(30.0),
-                        child: TextField(
-                          controller: passwordController,
-                          decoration:
-                              const InputDecoration(hintText: 'Date'),
-                        ),
-                      ),
-                      const SizedBox(height: 32.0),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 30, vertical: 10),
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              child: const Padding(
-                                padding: EdgeInsets.all(18.0),
-                                child: Text(
-                                  "Add Expense",
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 30, vertical: 10),
+                        child: ElevatedButton(
+                          onPressed: () {},
+                          child: const Padding(
+                            padding: EdgeInsets.all(18.0),
+                            child: Text(
+                              "Add Expense",
+                              style: TextStyle(
+                                fontSize: 18,
                               ),
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

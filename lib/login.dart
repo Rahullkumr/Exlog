@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
         body: Center(
           child: Column(
             children: [
-              Text('${widget.email} ${widget.password}'),
+              Text(widget.email),
               SingleChildScrollView(
                 child: Form(
                   key: _formKey,
