@@ -105,52 +105,84 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
                 const SizedBox(height: 32.0),
-                ElevatedButton(
-                  onPressed: () {
-                    //  Validate form for empty fields
-                    if (nameController.text.isEmpty ||
-                        emailController.text.isEmpty ||
-                        passwordController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Empty fields not allowed'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                    } else {
-                      // navigate to login page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => LoginPage(
-                            email: emailController.text,
-                            password: passwordController.text,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          //  Validate form for empty fields
+                          if (nameController.text.isEmpty ||
+                              emailController.text.isEmpty ||
+                              passwordController.text.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Empty fields not allowed'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          } else {
+                            // navigate to login page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Padding(
+                            padding: EdgeInsets.all(18.0),
+                            child: Text(
+                              "Register",
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                  },
-                  child: const Text('Register'),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8.0),
                 const Text('Already have an account?'),
                 const SizedBox(height: 8.0),
-                ElevatedButton(
-                  onPressed: () {
-                    // Navigate to login page
-                    String email = 'rahul@gmail.com';
-                    String password = '1234';
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginPage(
-                          email: email,
-                          password: password,
-                        ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Navigate to login page
+                          String email = 'rahul@gmail.com';
+                          String password = '1234';
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(
+                                email: email,
+                                password: password,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Padding(
+                            padding: EdgeInsets.all(18.0),
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
                       ),
-                    );
-                  },
-                  child: const Text('Login'),
+                    ),
+                  ],
                 )
               ],
             ),

@@ -57,41 +57,57 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       const SizedBox(height: 32.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Validate form for empty fields
-
-                          if (emailController.text.isEmpty ||
-                              passwordController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Empty fields not allowed'),
-                                backgroundColor: Colors.red,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                // Validate form for empty fields
+                          
+                                if (emailController.text.isEmpty ||
+                                    passwordController.text.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Empty fields not allowed'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                } else if (_formKey.currentState!.validate()) {
+                                  if (emailController.text == widget.email &&
+                                      passwordController.text == widget.password) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => DashboardPage(
+                                          email: emailController.text,
+                                          password: passwordController.text,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Invalid Data'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
+                                }
+                              },
+                              child: const Padding(
+                            padding: EdgeInsets.all(18.0),
+                            child: Text(
+                              "Login",
+                              style: TextStyle(
+                                fontSize: 18,
                               ),
-                            );
-                          } else if (_formKey.currentState!.validate()) {
-                            if (emailController.text == widget.email &&
-                                passwordController.text == widget.password) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DashboardPage(
-                                    email: emailController.text,
-                                    password: passwordController.text,
-                                  ),
-                                ),
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Invalid Data'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                          }
-                        },
-                        child: const Text('Login'),
+                            ),
+                                                  ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
