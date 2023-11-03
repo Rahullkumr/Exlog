@@ -30,16 +30,16 @@ class RegistrationPage extends StatefulWidget {
   final String title;
 
   @override
-  State<RegistrationPage> createState() => _RegistrationPageState();
+  _RegistrationPageState createState() => _RegistrationPageState();
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
   // Database helper
 
   final _formKey = GlobalKey<FormState>();
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
   RegExp nameRegExp = RegExp(r'^[a-zA-Z0-9_ ]{3,30}$');
   RegExp emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
@@ -48,10 +48,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
   Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
     return openDatabase(
-      join(path, 'userdb.db'),
+      join(path, 'registration.db'),
       onCreate: (database, version) async {
         await database.execute(
-          "CREATE TABLE userstable(slno INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT,email TEXT PRIMARY KEY, password TEXT)",
+          "CREATE TABLE IF NOT EXISTS userstable(email TEXT PRIMARY KEY, name TEXT, password TEXT)",
         );
       },
       version: 1,
@@ -65,11 +65,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
       await db.insert(
         'userstable',
         {
-          'name': nameController.text,
           'email': emailController.text,
+          'name': nameController.text,
           'password': passwordController.text
         },
       );
+      setState(() {});
     }
   }
 
@@ -87,35 +88,78 @@ class _RegistrationPageState extends State<RegistrationPage> {
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: [
+              children: <Widget>[
                 const Text(
                   'Register',
                   style: TextStyle(fontSize: 32.0),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(30.0),
-                  child: TextField(
+                  child: TextFormField(
                     controller: nameController,
                     decoration: const InputDecoration(hintText: 'Name'),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter name';
+                      }
+                      else if(!nameRegExp.hasMatch(nameController.text)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Name should contain only alphabets'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(height: 5.0),
                 Padding(
                   padding: const EdgeInsets.all(30.0),
-                  child: TextField(
+                  child: TextFormField(
                     controller: emailController,
                     decoration: const InputDecoration(hintText: 'Email'),
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter email';
+                      }
+                      else if (!emailRegExp.hasMatch(emailController.text)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Invalid email address'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                      return null;
+                    },
                     keyboardType: TextInputType.emailAddress,
                   ),
                 ),
                 const SizedBox(height: 32.0),
                 Padding(
                   padding: const EdgeInsets.all(30.0),
-                  child: TextField(
+                  child: TextFormField(
                     controller: passwordController,
                     obscureText: true,
                     decoration: const InputDecoration(hintText: 'Password'),
                     keyboardType: TextInputType.visiblePassword,
+                    validator: (String? value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter password';
+                      }
+                      else if (!passwordRegExp.hasMatch(passwordController.text)) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                'Password should contain atleast 8 characters'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                      return null;
+                    },
                   ),
                 ),
                 const SizedBox(height: 32.0),
@@ -127,60 +171,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           horizontal: 30, vertical: 10),
                       child: ElevatedButton(
                         onPressed: () {
-                          //  Validate form for empty fields
-                          if (nameController.text.isEmpty ||
-                              emailController.text.isEmpty ||
-                              passwordController.text.isEmpty) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Empty fields not allowed'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                          } else {
-                            // validate name
-                            if (!nameRegExp.hasMatch(nameController.text)) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Name should contain only alphabets'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            } else if (!emailRegExp
-                                .hasMatch(emailController.text)) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Invalid email address'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            }
-                            // validate password
-                            else if (!passwordRegExp
-                                .hasMatch(passwordController.text)) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Password should contain atleast 8 characters'),
-                                  backgroundColor: Colors.red,
-                                ),
-                              );
-                            } else {
-                              insertData;
+                          // call 
 
-                              // navigate to login page
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => LoginPage(
-                                    email: emailController.text,
-                                    password: passwordController.text,
-                                  ),
-                                ),
-                              );
-                            }
-                          }
+                          insertData();
+
+                          // navigate to login page
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(18.0),
@@ -207,15 +208,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       child: ElevatedButton(
                         onPressed: () {
                           // Navigate to login page
-                          String email = 'rahul@gmail.com';
-                          String password = '1234';
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LoginPage(
-                                email: email,
-                                password: password,
-                              ),
+                              builder: (context) => LoginPage(),
                             ),
                           );
                         },

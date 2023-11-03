@@ -1,10 +1,10 @@
 import 'package:exlog/dashboard.dart';
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class LoginPage extends StatefulWidget {
-  final String email;
-  final String password;
-  const LoginPage({super.key, required this.email, required this.password});
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -14,6 +14,38 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+
+// database code starts here
+  late Database _database;
+
+  @override
+  void initState() {
+    super.initState();
+    _initDatabase();
+  }
+
+  Future<void> _initDatabase() async {
+    try {
+      _database = await openDatabase(
+        join(await getDatabasesPath(), 'registration.db'),
+        version: 1,
+      );
+    } catch (e) {
+      print('Error opening database: $e');
+      // You can show an error message to the user here
+    }
+  }
+
+  Future<bool> _validateUser(String email, String password) async {
+    final List<Map<String, dynamic>> users = await _database.query(
+      'userstable',
+      where: 'email = ? AND password = ?',
+      whereArgs: [email, password],
+    );
+    return users.isNotEmpty;
+  }
+// database code ends here
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -26,7 +58,6 @@ class _LoginPageState extends State<LoginPage> {
         body: Center(
           child: Column(
             children: [
-              Text(widget.email),
               SingleChildScrollView(
                 child: Form(
                   key: _formKey,
@@ -36,7 +67,6 @@ class _LoginPageState extends State<LoginPage> {
                       const Text(
                         'Login',
                         style: TextStyle(fontSize: 32.0),
-                        
                       ),
                       Padding(
                         padding: const EdgeInsets.all(30.0),
@@ -61,11 +91,12 @@ class _LoginPageState extends State<LoginPage> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 10),
                             child: ElevatedButton(
-                              onPressed: () {
+                              onPressed: () async {
                                 // Validate form for empty fields
-                          
+
                                 if (emailController.text.isEmpty ||
                                     passwordController.text.isEmpty) {
                                   ScaffoldMessenger.of(context).showSnackBar(
@@ -74,9 +105,11 @@ class _LoginPageState extends State<LoginPage> {
                                       backgroundColor: Colors.red,
                                     ),
                                   );
-                                } else if (_formKey.currentState!.validate()) {
-                                  if (emailController.text == widget.email &&
-                                      passwordController.text == widget.password) {
+                                } else if (_formKey.currentState!.validate()) {                                  
+                                  final isValidUser = await _validateUser(
+                                      emailController.text,
+                                      passwordController.text);
+                                  if (isValidUser) {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -97,14 +130,14 @@ class _LoginPageState extends State<LoginPage> {
                                 }
                               },
                               child: const Padding(
-                            padding: EdgeInsets.all(18.0),
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                fontSize: 18,
+                                padding: EdgeInsets.all(18.0),
+                                child: Text(
+                                  "Login",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                  ),
+                                ),
                               ),
-                            ),
-                                                  ),
                             ),
                           ),
                         ],
