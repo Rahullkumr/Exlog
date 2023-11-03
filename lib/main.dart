@@ -1,7 +1,6 @@
-// import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 import 'login.dart';
 
 void main() {
@@ -42,21 +41,36 @@ class _RegistrationPageState extends State<RegistrationPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
-  _RegistrationPageState() {
-    initDb();
+  RegExp nameRegExp = RegExp(r'^[a-zA-Z0-9_ ]{3,30}$');
+  RegExp emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+  RegExp passwordRegExp = RegExp(r'^.{8,}$');
+
+  Future<Database> initializeDB() async {
+    String path = await getDatabasesPath();
+    return openDatabase(
+      join(path, 'userdb.db'),
+      onCreate: (database, version) async {
+        await database.execute(
+          "CREATE TABLE userstable(slno INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT,email TEXT PRIMARY KEY, password TEXT)",
+        );
+      },
+      version: 1,
+    );
   }
 
-  late Database _db;
-
-  Future<void> initDb() async {
-    _db = await openDatabase('registration.db');
-    await _db.execute(
-        "CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, email TEXT)");
-  }
-
-  // Insert a new user record
-  void _registerUser(String name, String email) async {
-    await _db.insert('users', {'name': name, 'email': email});
+  void insertData() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      _formKey.currentState?.save();
+      final Database db = await initializeDB();
+      await db.insert(
+        'userstable',
+        {
+          'name': nameController.text,
+          'email': emailController.text,
+          'password': passwordController.text
+        },
+      );
+    }
   }
 
   @override
@@ -109,7 +123,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 10),
                       child: ElevatedButton(
                         onPressed: () {
                           //  Validate form for empty fields
@@ -123,27 +138,59 @@ class _RegistrationPageState extends State<RegistrationPage> {
                               ),
                             );
                           } else {
-                            // navigate to login page
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => LoginPage(
-                                  email: emailController.text,
-                                  password: passwordController.text,
+                            // validate name
+                            if (!nameRegExp.hasMatch(nameController.text)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Name should contain only alphabets'),
+                                  backgroundColor: Colors.red,
                                 ),
-                              ),
-                            );
+                              );
+                            } else if (!emailRegExp
+                                .hasMatch(emailController.text)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Invalid email address'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                            // validate password
+                            else if (!passwordRegExp
+                                .hasMatch(passwordController.text)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Password should contain atleast 8 characters'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            } else {
+                              insertData;
+
+                              // navigate to login page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => LoginPage(
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                  ),
+                                ),
+                              );
+                            }
                           }
                         },
                         child: const Padding(
-                            padding: EdgeInsets.all(18.0),
-                            child: Text(
-                              "Register",
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
+                          padding: EdgeInsets.all(18.0),
+                          child: Text(
+                            "Register",
+                            style: TextStyle(
+                              fontSize: 18,
                             ),
                           ),
+                        ),
                       ),
                     ),
                   ],
@@ -155,7 +202,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 30, vertical: 10),
                       child: ElevatedButton(
                         onPressed: () {
                           // Navigate to login page
@@ -172,14 +220,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           );
                         },
                         child: const Padding(
-                            padding: EdgeInsets.all(18.0),
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
+                          padding: EdgeInsets.all(18.0),
+                          child: Text(
+                            "Login",
+                            style: TextStyle(
+                              fontSize: 18,
                             ),
                           ),
+                        ),
                       ),
                     ),
                   ],
