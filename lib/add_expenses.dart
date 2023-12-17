@@ -3,7 +3,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
-
 class AddExpenses extends StatefulWidget {
   const AddExpenses({super.key});
 
@@ -63,13 +62,15 @@ class _AddExpensesState extends State<AddExpenses> {
             child: Form(
               key: _formKey,
               child: Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Padding(
                     padding: EdgeInsets.all(30.0),
                     child: Text(
                       'Today\'s Expenses',
-                      style: TextStyle(fontSize: 32.0),
+                      style: TextStyle(
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   Padding(
@@ -77,7 +78,7 @@ class _AddExpensesState extends State<AddExpenses> {
                     child: TextField(
                       controller: dateController,
                       decoration:
-                      const InputDecoration(hintText: 'Date (25/12/2022)'),
+                          const InputDecoration(hintText: 'Date (25/12/2022)'),
                     ),
                   ),
                   const SizedBox(height: 10.0),
@@ -112,10 +113,9 @@ class _AddExpensesState extends State<AddExpenses> {
                             final amount = amountController.text;
 
                             bool isValidInput() {
-
                               // Check if the email address is valid.
                               if (!RegExp(
-                                  r'^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[0-2])/([0-9]{4})$')
+                                      r'^(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[0-2])/([0-9]{4})$')
                                   .hasMatch(date)) {
                                 // Show an error message.
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -128,8 +128,7 @@ class _AddExpensesState extends State<AddExpenses> {
                               }
 
                               // Check if the amount is valid.
-                              if (!RegExp(
-                                  r'^\d+(\.\d{1,2})?$')
+                              if (!RegExp(r'^(?=\d*[1-9])\d*(\.\d{1,2})?$')
                                   .hasMatch(amount)) {
                                 // Show an error message.
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -159,19 +158,20 @@ class _AddExpensesState extends State<AddExpenses> {
                                 context: context,
                                 type: AlertType.success,
                                 title: "Data inserted",
-                                desc: "You have successfully inserted data to the database.",
+                                desc:
+                                    "You have successfully inserted data to the database.",
                                 buttons: [
                                   DialogButton(
                                     onPressed: () => Navigator.pop(context),
                                     width: 120,
                                     child: const Text(
                                       "OK",
-                                      style: TextStyle(color: Colors.white, fontSize: 20),
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 20),
                                     ),
                                   )
                                 ],
                               ).show();
-
                             }
                           },
                           child: const Padding(
