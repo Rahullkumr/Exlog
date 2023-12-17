@@ -13,6 +13,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Exlog',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -41,9 +42,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  RegExp nameRegExp = RegExp(r'^[a-zA-Z0-9_ ]{3,30}$');
-  RegExp emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-  RegExp passwordRegExp = RegExp(r'^.{8,}$');
 
   Future<Database> initializeDB() async {
     String path = await getDatabasesPath();
@@ -82,8 +80,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
         title: Text(widget.title),
         centerTitle: true,
       ),
-      body: Center(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: Center(
           child: Form(
             key: _formKey,
             child: Column(
@@ -98,20 +96,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   child: TextFormField(
                     controller: nameController,
                     decoration: const InputDecoration(hintText: 'Name'),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter name';
-                      }
-                      else if(!nameRegExp.hasMatch(nameController.text)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Name should contain only alphabets'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                      return null;
-                    },
+
                   ),
                 ),
                 const SizedBox(height: 5.0),
@@ -120,20 +105,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   child: TextFormField(
                     controller: emailController,
                     decoration: const InputDecoration(hintText: 'Email'),
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter email';
-                      }
-                      else if (!emailRegExp.hasMatch(emailController.text)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Invalid email address'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                      return null;
-                    },
+
                     keyboardType: TextInputType.emailAddress,
                   ),
                 ),
@@ -145,21 +117,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     obscureText: true,
                     decoration: const InputDecoration(hintText: 'Password'),
                     keyboardType: TextInputType.visiblePassword,
-                    validator: (String? value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter password';
-                      }
-                      else if (!passwordRegExp.hasMatch(passwordController.text)) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                                'Password should contain atleast 8 characters'),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
-                      return null;
-                    },
+
                   ),
                 ),
                 const SizedBox(height: 32.0),
@@ -171,17 +129,60 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           horizontal: 30, vertical: 10),
                       child: ElevatedButton(
                         onPressed: () {
-                          // call 
+                          final name = nameController.text;
+                          final email = emailController.text;
+                          final password = passwordController.text;
 
-                          insertData();
+                          bool isValidInput() {
 
-                          // navigate to login page
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                            ),
-                          );
+                            // Check if the email address is valid.
+                            if (!RegExp(
+                                r'^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+')
+                                .hasMatch(email)) {
+                              // Show an error message.
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Invalid email address.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                              return false;
+                            }
+
+                            // Check if the password is at least 8 characters long.
+                            if (password.length < 8) {
+                              // Show an error message.
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Password must be at least 8 characters long.'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                              return false;
+                            }
+                            return true;
+                          }
+
+                          if (name.isEmpty ||
+                              email.isEmpty ||
+                              password.isEmpty) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Empty fields not allowed'),
+                                backgroundColor: Colors.red,
+                              ),
+                            );
+                          } else if (isValidInput()) {
+                            insertData(); // insert data into dB
+                            // navigate to login page
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ),
+                            );
+                          }
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(18.0),

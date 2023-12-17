@@ -56,10 +56,10 @@ class _LoginPageState extends State<LoginPage> {
           centerTitle: true,
         ),
         body: Center(
-          child: Column(
-            children: [
-              SingleChildScrollView(
-                child: Form(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Form(
                   key: _formKey,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -145,8 +145,8 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
