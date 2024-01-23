@@ -15,3 +15,5 @@ Flutter expense tracker app made as a mini project in sem3.
 <br><br>
 
 Run any Flutter repository on Zapp website: <a href="https://zapp.run/assets/homepage/import-github.gif">refer this link </a>
+
+List of all Flutter apps: <a href="https://github.com/Rahullkumr/FlutterProjectsList">click here</a>
